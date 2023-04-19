@@ -52,15 +52,21 @@ namespace Dcat\Admin {
      * @property Grid\Column|Collection abilities
      * @property Grid\Column|Collection last_used_at
      * @property Grid\Column|Collection expires_at
+     * @property Grid\Column|Collection advertise_content
+     * @property Grid\Column|Collection send_time
+     * @property Grid\Column|Collection deduction_money
+     * @property Grid\Column|Collection send_channel
+     * @property Grid\Column|Collection advertise_createtime
+     * @property Grid\Column|Collection advertise_updatetime
      * @property Grid\Column|Collection chat_ground_id
      * @property Grid\Column|Collection user_no
      * @property Grid\Column|Collection user_name
-     * @property Grid\Column|Collection send_time
      * @property Grid\Column|Collection send_text
      * @property Grid\Column|Collection no
      * @property Grid\Column|Collection u_money
      * @property Grid\Column|Collection payment_time
      * @property Grid\Column|Collection order_hash
+     * @property Grid\Column|Collection order_status
      * @property Grid\Column|Collection order_address
      * @property Grid\Column|Collection order_createtime
      * @property Grid\Column|Collection order_updatetime
@@ -113,15 +119,21 @@ namespace Dcat\Admin {
      * @method Grid\Column|Collection abilities(string $label = null)
      * @method Grid\Column|Collection last_used_at(string $label = null)
      * @method Grid\Column|Collection expires_at(string $label = null)
+     * @method Grid\Column|Collection advertise_content(string $label = null)
+     * @method Grid\Column|Collection send_time(string $label = null)
+     * @method Grid\Column|Collection deduction_money(string $label = null)
+     * @method Grid\Column|Collection send_channel(string $label = null)
+     * @method Grid\Column|Collection advertise_createtime(string $label = null)
+     * @method Grid\Column|Collection advertise_updatetime(string $label = null)
      * @method Grid\Column|Collection chat_ground_id(string $label = null)
      * @method Grid\Column|Collection user_no(string $label = null)
      * @method Grid\Column|Collection user_name(string $label = null)
-     * @method Grid\Column|Collection send_time(string $label = null)
      * @method Grid\Column|Collection send_text(string $label = null)
      * @method Grid\Column|Collection no(string $label = null)
      * @method Grid\Column|Collection u_money(string $label = null)
      * @method Grid\Column|Collection payment_time(string $label = null)
      * @method Grid\Column|Collection order_hash(string $label = null)
+     * @method Grid\Column|Collection order_status(string $label = null)
      * @method Grid\Column|Collection order_address(string $label = null)
      * @method Grid\Column|Collection order_createtime(string $label = null)
      * @method Grid\Column|Collection order_updatetime(string $label = null)
@@ -179,15 +191,21 @@ namespace Dcat\Admin {
      * @property Show\Field|Collection abilities
      * @property Show\Field|Collection last_used_at
      * @property Show\Field|Collection expires_at
+     * @property Show\Field|Collection advertise_content
+     * @property Show\Field|Collection send_time
+     * @property Show\Field|Collection deduction_money
+     * @property Show\Field|Collection send_channel
+     * @property Show\Field|Collection advertise_createtime
+     * @property Show\Field|Collection advertise_updatetime
      * @property Show\Field|Collection chat_ground_id
      * @property Show\Field|Collection user_no
      * @property Show\Field|Collection user_name
-     * @property Show\Field|Collection send_time
      * @property Show\Field|Collection send_text
      * @property Show\Field|Collection no
      * @property Show\Field|Collection u_money
      * @property Show\Field|Collection payment_time
      * @property Show\Field|Collection order_hash
+     * @property Show\Field|Collection order_status
      * @property Show\Field|Collection order_address
      * @property Show\Field|Collection order_createtime
      * @property Show\Field|Collection order_updatetime
@@ -240,15 +258,21 @@ namespace Dcat\Admin {
      * @method Show\Field|Collection abilities(string $label = null)
      * @method Show\Field|Collection last_used_at(string $label = null)
      * @method Show\Field|Collection expires_at(string $label = null)
+     * @method Show\Field|Collection advertise_content(string $label = null)
+     * @method Show\Field|Collection send_time(string $label = null)
+     * @method Show\Field|Collection deduction_money(string $label = null)
+     * @method Show\Field|Collection send_channel(string $label = null)
+     * @method Show\Field|Collection advertise_createtime(string $label = null)
+     * @method Show\Field|Collection advertise_updatetime(string $label = null)
      * @method Show\Field|Collection chat_ground_id(string $label = null)
      * @method Show\Field|Collection user_no(string $label = null)
      * @method Show\Field|Collection user_name(string $label = null)
-     * @method Show\Field|Collection send_time(string $label = null)
      * @method Show\Field|Collection send_text(string $label = null)
      * @method Show\Field|Collection no(string $label = null)
      * @method Show\Field|Collection u_money(string $label = null)
      * @method Show\Field|Collection payment_time(string $label = null)
      * @method Show\Field|Collection order_hash(string $label = null)
+     * @method Show\Field|Collection order_status(string $label = null)
      * @method Show\Field|Collection order_address(string $label = null)
      * @method Show\Field|Collection order_createtime(string $label = null)
      * @method Show\Field|Collection order_updatetime(string $label = null)

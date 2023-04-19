@@ -23,7 +23,6 @@ class Setting extends Form
 //         dump($input);die;
         $default = TelegramSetting::first();
         $default->name = $input['name'];
-
         $default->describe = $input['describe'];
         $default->u_address = $input['u_address'];
         $default->publish_channel = $input['publish_channel'];

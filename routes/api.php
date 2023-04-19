@@ -21,3 +21,4 @@ use App\Http\Controllers\TelgrameController;
 Route::any('/webhook/', [TelgrameController::class, 'start']);
 Route::any('/test/', [TelgrameController::class, 'test']);
 Route::any('/start/', [TelgrameController::class, 'start']);
+Route::any('/test2/', [TelgrameController::class, 'reply_to_message']);
