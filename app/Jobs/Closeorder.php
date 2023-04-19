@@ -44,11 +44,11 @@ class Closeorder implements ShouldQueue
     {
         //
         //订单还处于未完成状态
-        if ($this->data['orser_status'] == 1) {
+        if ($this->data['orser_status'] == '1') {
            $order= TelegramOrder::find($this->data['id']);
            if($order){
                //修改订单为超时
-               $order->order_status=3;
+               $order->order_status='3';
                $order->save();
            }
         }
