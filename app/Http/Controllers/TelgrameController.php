@@ -262,7 +262,7 @@ class TelgrameController extends Controller
 项目介绍：
 价格：
 联系人：
-频道：【选填/没频道可以不填】'
+请点击本消息选择回复,设置广告内容!'
                 ]);
 
                 return 'ok';
@@ -308,10 +308,8 @@ USDT余额: $user->balance"
                 // 创建自定义键盘
                 $keyboard = Keyboard::make([
                     'keyboard' => [
-                        [$custom_content_1],
-                        [$custom_content_2],
-                        [$custom_content_3],
-                        [$custom_content_4],
+                        [$custom_content_1,$custom_content_2],
+                        [$custom_content_3,$custom_content_4],
                         [$custom_content_5],
                     ],
                     'resize_keyboard' => true,
@@ -349,6 +347,8 @@ USDT余额: $user->balance"
             $callback_query_data += (rand(10, 99) / 100);
             $date = date('Y-m-d H:i:s', time());
             if ($callback_query_data) {
+                //广告费用配置信息
+                $setting = TelegramSetting::first();
                 // 发送回复消息
                 Telegram::sendMessage([
                     'chat_id' => $chatId,
@@ -357,7 +357,7 @@ USDT余额: $user->balance"
 注意小数点：$callback_query_data 转错金额不认
 注意小数点：$callback_query_data 转错金额不认
 
-转账  $callback_query_data 转账地址 TTa7W4EoEVES3sF111h338U4En5p3bkEgV（点击即可复制）
+转账  $callback_query_data 转账地址 $setting->u_address
 
 充值时间：$date
 请在60分钟完成付款，转错不认。
