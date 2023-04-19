@@ -188,6 +188,45 @@ class TelgrameController extends Controller
         $history->send_time = date('Y-m-d H:i:s', time());
         $history->send_text = $text;
         $history->save();
+
+        //判断用户是否存在
+        $user = TelegramUser::where('user_no', $chatId)->first();
+        if (!$user) {
+            //开始的时候,重启第一次访问
+            $user = new TelegramUser();
+            $user->user_no = $chatId;
+            $user->user_name = $name;
+            $user->chat_ground_id = $chatId;
+            $user->add_time = date('Y-m-d H:i:s', time());
+            $user->user_status = '3';
+            $user->save();
+            //发布键盘
+            $custom_content_1 = '发布广告🔥';
+            $custom_content_2 = '我要充值💰';
+            $custom_content_3 = '个人中心👤';
+            $custom_content_4 = '消费记录📝';
+            $custom_content_5 = '👉必看发布规则👈';
+            // 创建自定义键盘
+            $keyboard = Keyboard::make([
+                'keyboard' => [
+                    [$custom_content_1],
+                    [$custom_content_2],
+                    [$custom_content_3],
+                    [$custom_content_4],
+                    [$custom_content_5],
+                ],
+                'resize_keyboard' => true,
+                'one_time_keyboard' => true
+            ]);
+            Telegram::sendMessage([
+                'chat_id' => $chatId,
+                'text' => '请选择一个选项：',
+                'reply_markup' => $keyboard
+            ]);
+            return 'ok';
+
+        }
+
         switch ($text) {
             case '👉必看发布规则👈':
                 // 发送回复消息
@@ -287,43 +326,6 @@ USDT余额: $user->balance"
                 return 'ok';
                 break;
             default:
-                //判断是否存在
-                $user = TelegramUser::where('user_no', $chatId)->first();
-                if (!$user) {
-                    //开始的时候,重启第一次访问
-                    $user = new TelegramUser();
-                    $user->user_no = $chatId;
-                    $user->user_name = $name;
-                    $user->chat_ground_id = $chatId;
-                    $user->add_time = date('Y-m-d H:i:s', time());
-                    $user->user_status = '3';
-                    $user->save();
-                    //发布键盘
-                    $custom_content_1 = '发布广告🔥';
-                    $custom_content_2 = '我要充值💰';
-                    $custom_content_3 = '个人中心👤';
-                    $custom_content_4 = '消费记录📝';
-                    $custom_content_5 = '👉必看发布规则👈';
-                    // 创建自定义键盘
-                    $keyboard = Keyboard::make([
-                        'keyboard' => [
-                            [$custom_content_1],
-                            [$custom_content_2],
-                            [$custom_content_3],
-                            [$custom_content_4],
-                            [$custom_content_5],
-                        ],
-                        'resize_keyboard' => true,
-                        'one_time_keyboard' => true
-                    ]);
-                    Telegram::sendMessage([
-                        'chat_id' => $chatId,
-                        'text' => '请选择一个选项：',
-                        'reply_markup' => $keyboard
-                    ]);
-                    return 'ok';
-
-                }
                 $response = Telegram::sendMessage([
                     'chat_id' => $chatId,
                     'text' => "未知内容;请输入 /start 重启机器人"
