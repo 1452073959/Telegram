@@ -87,6 +87,7 @@ class TelgrameController extends Controller
         $order->u_money=20.03;//订单号
         $order->user_id=33;//订单号
         $order->save();
+        Closeorder::dispatch($order)->delay(now()->addMinutes(1));
         die;
         return json_encode($arr, true);
         // 发送回复消息
@@ -117,6 +118,9 @@ class TelgrameController extends Controller
             $text = $update['text'];
             $chatId = $update['chat']['id'];
             $name = $update['from']['first_name'];
+            //判断用户是否存在;
+           $user= TelegramUser::where('user_no',$chatId)->first();
+
             $history = new TelegramHistory();
             $history->chat_ground_id = $chatId;
             $history->user_no = $chatId;
@@ -175,9 +179,8 @@ class TelgrameController extends Controller
                     Telegram::sendMessage([
                         'chat_id' => $chatId,
                         'text' => "用户ID:$chatId
-姓氏: $name
-用户名: 
-USDT余额:"
+用户名: $name
+USDT余额: $user->balance"
                     ]);
                     return 'ok';
                     break;

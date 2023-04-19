@@ -18,5 +18,8 @@ Route::group([
     $router->resource('teluser', 'TelegramUserController');
 
     $router->resource('history', 'TelegramHistoryController');    //发送历史
+    $router->resource('order', 'TelegramOrderController');    //订单
+
+
 
 });
