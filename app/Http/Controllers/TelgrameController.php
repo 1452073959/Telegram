@@ -274,7 +274,7 @@ USDT余额:"
                     //判断订幂等
 //                    是否有相同金额并且状态是未完成
                     $umoney=TelegramOrder::where('u_money',$callback_query_data)
-                        ->where('orser_status','1')
+                        ->where('order_status','1')
                         ->first();
                     if($user&&!$umoney){
                         //創建订单
