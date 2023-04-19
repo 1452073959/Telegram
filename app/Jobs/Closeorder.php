@@ -3,17 +3,14 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Telegram\Bot\Laravel\Facades\Telegram;
-
-class RemoveGrounp implements ShouldQueue
+use App\Models\TelegramOrder;
+class Closeorder implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
     /**
      * 任务可尝试次数.
      *
@@ -34,12 +31,10 @@ class RemoveGrounp implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($data,TelegramOrder $order)
     {
         $this->data = $data;
-        //
     }
-
     /**
      * Execute the job.
      *
@@ -48,15 +43,14 @@ class RemoveGrounp implements ShouldQueue
     public function handle()
     {
         //
-        if ($this->data['user_status'] == 3) {
-            Telegram::kickChatMember([
-                'chat_id' => $this->data['chat_ground_id'],
-                'user_id' => $this->data['user_no'],
-            ]);
+        //订单还处于未完成状态
+        if ($this->data['orser_status'] == 1) {
+           $order= TelegramOrder::find($this->data['id']);
+           if($order){
+               //修改订单为超时
+               $order->order_status=3;
+               $order->save();
+           }
         }
-        //主动让任务失败
-        $this->fail();
-
-
     }
 }

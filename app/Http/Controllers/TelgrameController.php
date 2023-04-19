@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\Closeorder;
 use App\Jobs\RemoveGrounp;
 use App\Models\TelegramHistory;
 use App\Models\TelegramOrder;
@@ -268,13 +269,30 @@ USDT余额:"
 收款地址为 USDT-TRC20
 转账10分钟后没到账及时联系>>"
                     ]);
+                    //获取充值用户,
                     $user = TelegramUser::where('user_no', $chatId)->first();
-                    //創建订单
-                    $order=new TelegramOrder();
-                    $order->no=date('YmdHis'.time()).rand(1000,9999);//订单号
-                    $order->u_money=$callback_query_data;//金额
-                    $order->user_id = $user['id'];//用户
-                    $order->save();
+                    //判断订幂等
+//                    是否有相同金额并且状态是未完成
+                    $umoney=TelegramOrder::where('u_money',$callback_query_data)
+                        ->where('orser_status',1)
+                        ->first();
+                    if($user&&$umoney){
+                        //創建订单
+                        $order=new TelegramOrder();
+                        $order->no=date('YmdHis'.time()).rand(1000,9999);//订单号
+                        $order->u_money=$callback_query_data;//金额
+                        $order->user_id = $user['id'];//用户
+                        $order->save();
+                        //60分钟未支付
+                        Closeorder::dispatch($order)->delay(now()->addMinutes(1));
+                    }else{
+                        //失败的时候
+                        Telegram::sendMessage([
+                            'chat_id' => $chatId,
+                            'text' => '订单创建失败!请重试'
+                        ]);
+                    }
+
                 }
             }
 
