@@ -276,7 +276,7 @@ USDT余额:"
                     $umoney=TelegramOrder::where('u_money',$callback_query_data)
                         ->where('orser_status','1')
                         ->first();
-                    if($user&&$umoney){
+                    if($user&&!$umoney){
                         //創建订单
                         $order=new TelegramOrder();
                         $order->no=date('YmdHis'.time()).rand(1000,9999);//订单号
