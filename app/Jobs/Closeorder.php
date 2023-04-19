@@ -31,7 +31,7 @@ class Closeorder implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($data,TelegramOrder $order)
+    public function __construct($data)
     {
         $this->data = $data;
     }
