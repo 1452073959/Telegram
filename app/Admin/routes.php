@@ -19,6 +19,8 @@ Route::group([
 
     $router->resource('history', 'TelegramHistoryController');    //发送历史
     $router->resource('order', 'TelegramOrderController');    //订单
+    $router->resource('advertise', 'TelegramAdvertiseController');    //广告订单
+
 
 
 
