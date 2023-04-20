@@ -10,8 +10,9 @@ return [
         'user_id' => '发送人',
         'deduction_money' => '扣除金额',
         'send_channel' => '发送频道',
-        'advertise_createtime' => 'advertise_createtime',
+        'advertise_createtime' => '更新时间',
         'advertise_updatetime' => 'advertise_updatetime',
+        'send_status' => '状态',
     ],
     'options' => [
     ],

@@ -18,6 +18,7 @@ class TelegramUserController extends AdminController
     protected function grid()
     {
         return Grid::make(new TelegramUser(), function (Grid $grid) {
+            $grid->model()->orderBy('id', 'desc');
             $grid->column('id')->sortable();
 //            $grid->column('chat_ground_id');
             $grid->column('user_no');
@@ -27,9 +28,23 @@ class TelegramUserController extends AdminController
 //            $grid->column('user_status');
 //            $grid->column('created_at');
             $grid->column('updated_at')->sortable();
-        
+
+            // 禁用详情按钮
+            $grid->disableViewButton();
+            // 禁用编辑按钮
+            $grid->disableEditButton();
+            // 显示快捷编辑按钮
+            $grid->showQuickEditButton();
+            // 禁用批量删除按钮
+            $grid->disableBatchDelete();
+            // 禁用创建按钮
+            $grid->disableCreateButton();
+            // 禁用行选择器
+            $grid->disableRowSelector();
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('id');
+                // 在这里添加字段过滤器
+                $filter->equal('user_no' );
+                $filter->like('user_name');
         
             });
         });
@@ -65,16 +80,11 @@ class TelegramUserController extends AdminController
     protected function form()
     {
         return Form::make(new TelegramUser(), function (Form $form) {
-            $form->display('id');
-            $form->text('chat_ground_id');
+//            $form->display('id');
             $form->text('user_no');
-            $form->text('user_name');
-            $form->text('add_time');
             $form->text('balance');
-            $form->text('user_status');
-        
-            $form->display('created_at');
-            $form->display('updated_at');
+//            $form->display('created_at');
+//            $form->display('updated_at');
         });
     }
 }

@@ -25,7 +25,11 @@ class TeleguserController extends AdminController
             $grid->column('user_status');
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
-        
+            // 禁用详情按钮
+            $grid->disableViewButton();
+
+            // 显示编辑按钮
+            $grid->showEditButton();
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');
         

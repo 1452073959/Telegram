@@ -18,16 +18,24 @@ class TelegramHistoryController extends AdminController
     protected function grid()
     {
         return Grid::make(new TelegramHistory(), function (Grid $grid) {
+            $grid->model()->orderBy('id', 'desc');
             $grid->column('id')->sortable();
-            $grid->column('chat_ground_id');
+//            $grid->column('chat_ground_id');
             $grid->column('user_no');
             $grid->column('user_name');
             $grid->column('send_time');
             $grid->column('send_text');
-        
+// 禁用操作按钮
+            $grid->disableActions();
+            // 禁用创建按钮
+            $grid->disableCreateButton();
+            // 禁用行选择器
+            $grid->disableRowSelector();
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('id');
-        
+                $filter->equal('user_no' );
+                $filter->like('user_name');
+                $filter->like('send_text');
+
             });
         });
     }

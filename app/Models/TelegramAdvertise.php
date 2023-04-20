@@ -13,4 +13,9 @@ class TelegramAdvertise extends Model
 //    public $timestamps = false;
     const CREATED_AT = 'advertise_createtime';
     const UPDATED_AT = 'advertise_updatetime';
+    //关联用户
+    public function user()
+    {
+        return $this->belongsTo(TelegramUser::class,'user_id','id');
+    }
 }

@@ -14,4 +14,9 @@ class TelegramOrder extends Model
 
     const CREATED_AT = 'order_createtime';
     const UPDATED_AT = 'order_updatetime';
+    //关联用户
+    public function user()
+    {
+        return $this->belongsTo(TelegramUser::class,'user_id','id');
+    }
 }

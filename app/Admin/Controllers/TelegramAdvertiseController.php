@@ -2,7 +2,10 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Grid\Cancel;
+use App\Admin\Actions\Grid\Send;
 use App\Admin\Repositories\TelegramAdvertise;
+use App\Models\TelegramUser;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
@@ -18,18 +21,47 @@ class TelegramAdvertiseController extends AdminController
     protected function grid()
     {
         return Grid::make(new TelegramAdvertise(), function (Grid $grid) {
+
+            $grid->selector(function (Grid\Tools\Selector $selector) {
+                $selector->select('send_status', [1 => '待发送', 2 => '已发送',3=>'无效']);
+            });
+
+            $grid->model()->orderBy('id', 'desc');
             $grid->column('id')->sortable();
-            $grid->column('advertise_content');
+            // 关联 profile 表数据
+            $grid->model()->with(['user']);
+            $grid->column('user.user_no','用户id');
+            $grid->column('user.user_name','用户名');
+            $grid->column('advertise_content')->textarea();
             $grid->column('send_time');
             $grid->column('user_id');
             $grid->column('deduction_money');
             $grid->column('send_channel');
             $grid->column('advertise_createtime');
-            $grid->column('advertise_updatetime');
-        
+            $grid->send_status->using([1 => '待发送', 2 => '已发送',3=>'无效']);
+// 也可以通过以下方式启用或禁用按钮
+            $grid->disableDeleteButton();
+            $grid->disableEditButton();
+            $grid->disableQuickEditButton();
+            $grid->disableViewButton();
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+
+                if($actions->row->send_status=='1'){
+                    $actions->append(new Send());
+                    $actions->append(new Cancel());
+                }
+            });
+//            $grid->actions(new Send());
+//            $grid->column('advertise_updatetime');
+            // 禁用创建按钮
+            $grid->disableCreateButton();
+            // 禁用行选择器
+            $grid->disableRowSelector();
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('id');
-        
+                $filter->like('user.user_no','用户id');
+                $filter->like('user.user_name','用户名');
+                $filter->like('advertise_content');
+
             });
         });
     }

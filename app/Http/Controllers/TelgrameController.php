@@ -84,59 +84,10 @@ class TelgrameController extends Controller
 
     public function test()
     {
-        //創建订单
-        $arr = array(
-            'update_id' => 590437614,
-            'message' =>
-                array(
-                    'message_id' => 745,
-                    'from' =>
-                        array(
-                            'id' => 5815318219,
-                            'is_bot' => false,
-                            'first_name' => 'dudu',
-                            'language_code' => 'zh-hans',
-                        ),
-                    'chat' =>
-                        array(
-                            'id' => 5815318219,
-                            'first_name' => 'dudu',
-                            'type' => 'private',
-                        ),
-                    'date' => 1681889589,
-                    'reply_to_message' =>
-                        array(
-                            'message_id' => 744,
-                            'from' =>
-                                array(
-                                    'id' => 6166569980,
-                                    'is_bot' => true,
-                                    'first_name' => '测试机器人',
-                                    'username' => 'yiyayibot',
-                                ),
-                            'chat' =>
-                                array(
-                                    'id' => 5815318219,
-                                    'first_name' => 'dudu',
-                                    'type' => 'private',
-                                ),
-                            'date' => 1681889568,
-                            'text' => '项目名称：
-项目介绍：
-价格：
-联系人：
-频道：【选填/没频道可以不填】',
-                        ),
-                    'text' => '内容',
-                ),
-        );
-        die;
-        return json_encode($arr, true);
         // 发送回复消息
         $a = Telegram::sendMessage([
             'chat_id' => -1001805255623,
             'text' => '付费广告发布规则如下
-
 1:不得发布虚假诈骗广告，发现马上下架。
 
 2:广告行数不能超过10行。
