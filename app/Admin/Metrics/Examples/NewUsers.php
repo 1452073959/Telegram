@@ -16,7 +16,7 @@ class NewUsers extends Line
     {
         parent::init();
 
-        $this->title('New Users');
+        $this->title('统计交易');
         $this->dropdown([
             '7' => 'Last 7 Days',
             '28' => 'Last 28 Days',
@@ -43,9 +43,9 @@ class NewUsers extends Line
         switch ($request->get('option')) {
             case '365':
                 // 卡片内容
-                $this->withContent(mt_rand(1000, 5000).'k');
+                $this->withContent(100);
                 // 图表数据
-                $this->withChart(collect($generator(30))->toArray());
+                $this->withChart(collect($generator(2))->toArray());
                 break;
             case '30':
                 // 卡片内容

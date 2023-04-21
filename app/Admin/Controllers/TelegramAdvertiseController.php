@@ -41,7 +41,8 @@ class TelegramAdvertiseController extends AdminController
 //            $grid->column('user_id');
             $grid->column('deduction_money');
             $grid->column('send_channel');
-            $grid->column('advertise_createtime');
+//            $grid->column('advertise_createtime');
+            $grid->column('advertise_updatetime');
             $grid->send_status->using([1 => '待发送', 2 => '已发送',3=>'无效退回']);
 // 也可以通过以下方式启用或禁用按钮
             $grid->disableDeleteButton();
@@ -57,6 +58,21 @@ class TelegramAdvertiseController extends AdminController
             });
 //            $grid->actions(new Send());
 //            $grid->column('advertise_updatetime');
+            $grid->footer(function ($collection) use ($grid) {
+                $query = \App\Models\TelegramAdvertise::query();
+                // 拿到表格筛选 where 条件数组进行遍历
+                $grid->model()->getQueries()->unique()->each(function ($value) use (&$query) {
+                    if (in_array($value['method'], ['paginate', 'get', 'orderBy', 'orderByDesc'], true)) {
+                        return;
+                    }
+
+                    $query = call_user_func_array([$query, $value['method']], $value['arguments'] ?? []);
+                });
+
+                // 查出统计数据
+                $data = $query->sum('deduction_money');
+                return "<div style='padding: 10px;'>总计 ： $data</div>";
+            });
             // 禁用创建按钮
             $grid->disableCreateButton();
             // 禁用行选择器
@@ -65,6 +81,7 @@ class TelegramAdvertiseController extends AdminController
                 $filter->like('user.user_no','用户id');
                 $filter->like('user.user_name','用户名');
                 $filter->like('advertise_content');
+                $filter->between('advertise_createtime')->datetime();
 
             });
         });

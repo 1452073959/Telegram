@@ -2,11 +2,13 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Metrics\Examples\NewUsers;
 use App\Admin\Repositories\TelegramOrder;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
+use Dcat\Admin\Widgets\Metrics\Card;
 
 class TelegramOrderController extends AdminController
 {
@@ -42,8 +44,28 @@ class TelegramOrderController extends AdminController
             // 禁用行选择器
             $grid->disableRowSelector();
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('id');
-        
+                $filter->like('user.user_no','用户id');
+                $filter->like('user.user_name','用户名');
+                $filter->between('order_updatetime')->datetime();
+            });
+            $grid->header(function ($collection) use ($grid) {
+
+            });
+
+            $grid->footer(function ($collection) use ($grid) {
+                $query = \App\Models\TelegramOrder::query();
+                // 拿到表格筛选 where 条件数组进行遍历
+                $grid->model()->getQueries()->unique()->each(function ($value) use (&$query) {
+                    if (in_array($value['method'], ['paginate', 'get', 'orderBy', 'orderByDesc'], true)) {
+                        return;
+                    }
+
+                    $query = call_user_func_array([$query, $value['method']], $value['arguments'] ?? []);
+                });
+
+                // 查出统计数据
+                $data = $query->sum('u_money');
+                return "<div style='padding: 10px;'>总收入 ： $data</div>";
             });
         });
     }
