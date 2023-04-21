@@ -84,6 +84,12 @@ class TelgrameController extends Controller
 
     public function test()
     {
+
+
+        $reply = '您有2条订单记录,回复本消息查询;例:回复数字1即可查询1条';
+        $reply_substr = Str::limit($reply, 8, '');
+        $a = strrpos($reply_substr, '您有');
+        dd($reply_substr, $a);
         // 发送回复消息
         $a = Telegram::sendMessage([
             'chat_id' => -1001805255623,
@@ -249,21 +255,46 @@ USDT余额: $user->balance"
                 return $response['message_id'];
                 break;
             case '消费记录📝':
-               $Advertise=TelegramAdvertise::where('user_id',$user['id'])->count();
-                if($Advertise<=0){
-                    $response= Telegram::sendMessage([
+                $Advertise = TelegramAdvertise::where('user_id', $user['id'])->limit(20)->get();
+                if ($Advertise <= 0) {
+                    $response = Telegram::sendMessage([
                         'chat_id' => $chatId,
                         'text' => '暂无消费记录!'
                     ]);
                     return $response['message_id'];
                     break;
-                }else{
-                    $response= Telegram::sendMessage([
+                } else {
+                    $response = Telegram::sendMessage([
                         'chat_id' => $chatId,
-                        'text' => '您有'.$Advertise.'条订单记录,回复本消息查询;例:回复数字1即可查询1条;'
+                        'text' => '最近20条记录'
                     ]);
-                    return $response['message_id'];
+                    foreach ($Advertise as $k => $v) {
+                        $keyboard = Keyboard::make()
+                            ->inline()
+                            ->row(
+                                Keyboard::inlineButton(['text' => '查看详情', 'callback_data' => $v['id']])
+                            );
+                        $str = '发送时间:' . date('Y-m-d H:i', $v['send_time']) .
+                            '扣费金额:' . $v['deduction_money'];
+                        if ($v['send_status'] == '3') {
+                            $str .= "状态:内容不合规,已退回!";
+                        } elseif ($v['send_status'] == '2') {
+                            $str .= "状态:已发送";
+                        } elseif ($v['send_status'] == '1') {
+                            $str .= "状态:待审核发送";
+                        }
+                        $response = Telegram::sendMessage([
+                            'chat_id' => $chatId,
+                            'text' => $str,
+                            'reply_markup' => $keyboard,
+                            'chat_instance' => 'some_unique_id' // 设置 chat_instance 参数
+                        ]);
+                        Cache::put('cx' . $response['message_id'], '查询交易');
+
+                    }
+                    return 'ok';
                     break;
+
                 }
 
             case '/start':
@@ -276,8 +307,8 @@ USDT余额: $user->balance"
                 // 创建自定义键盘
                 $keyboard = Keyboard::make([
                     'keyboard' => [
-                        [$custom_content_1,$custom_content_2],
-                        [$custom_content_3,$custom_content_4],
+                        [$custom_content_1, $custom_content_2],
+                        [$custom_content_3, $custom_content_4],
                         [$custom_content_5],
                     ],
                     'resize_keyboard' => true,
@@ -309,6 +340,7 @@ USDT余额: $user->balance"
         $chatId = $callback_query['from']['id'];
         Log::info($callback_query);
         $message = Cache::get('cz' . $callback_query['message']['message_id']);//获取消息回调的id
+        $cx = Cache::get('cx' . $callback_query['message']['message_id']);//获取消息回调的id查询id
         if ($message) {
             $callback_query_data = $callback_query['data'];//选择的值
             //添加两位随机小数
@@ -362,6 +394,13 @@ USDT余额: $user->balance"
                 }
 
             }
+        } elseif ($cx) {
+            $cx_data = $callback_query['data'];//选择的值
+            $Advertise = TelegramAdvertise::find($cx_data);
+            $response = Telegram::sendMessage([
+                'chat_id' => $chatId,
+                'text' => $Advertise['advertise_content']
+            ]);
         } else {
             $response = Telegram::sendMessage([
                 'chat_id' => $chatId,
@@ -385,6 +424,8 @@ USDT余额: $user->balance"
 //        dump($reply);
         //截取回复内容前五个字确认回复内容
         $reply_substr = Str::limit($reply, 8, '');
+
+
         //回复的广告信息
         if ($reply_substr == "项目名称") {
             //判断余额是否足够
