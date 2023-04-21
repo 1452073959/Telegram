@@ -86,10 +86,61 @@ class TelgrameController extends Controller
     {
 
 
-        $reply = '您有2条订单记录,回复本消息查询;例:回复数字1即可查询1条';
-        $reply_substr = Str::limit($reply, 8, '');
-        $a = strrpos($reply_substr, '您有');
-        dd($reply_substr, $a);
+
+
+        $arr=array (
+            'update_id' => 590437741,
+            'message' =>
+                array (
+                    'message_id' => 988,
+                    'from' =>
+                        array (
+                            'id' => 5815318219,
+                            'is_bot' => false,
+                            'first_name' => 'dudu',
+                            'language_code' => 'zh-hans',
+                        ),
+                    'chat' =>
+                        array (
+                            'id' => 5815318219,
+                            'first_name' => 'dudu',
+                            'type' => 'private',
+                        ),
+                    'date' => 1682049051,
+                    'text' => '消费记录📝',
+                ),
+        )  ;
+        return json_encode($arr,true);
+
+
+
+
+
+        $Advertise = TelegramAdvertise::where('user_id', 33)->limit(20)->get();
+        foreach ($Advertise as $k => $v) {
+            $keyboard = Keyboard::make()
+                ->inline()
+                ->row(
+                    Keyboard::inlineButton(['text' => '查看详情', 'callback_data' => $v['id']])
+                );
+            $str = '发送时间:' . date('Y-m-d H:i', $v['send_time']) .
+                '扣费金额:' . $v['deduction_money'];
+            if ($v['send_status'] == '3') {
+                $str .= "状态:内容不合规,已退回!";
+            } elseif ($v['send_status'] == '2') {
+                $str .= "状态:已发送";
+            } elseif ($v['send_status'] == '1') {
+                $str .= "状态:待审核发送";
+            }
+            $response = Telegram::sendMessage([
+                'chat_id' => 5815318219,
+                'text' => $str,
+                'reply_markup' => $keyboard,
+                'chat_instance' => 'some_unique_id' // 设置 chat_instance 参数
+            ]);
+            Cache::put('cx' . $response['message_id'], '查询交易');
+
+        }
         // 发送回复消息
         $a = Telegram::sendMessage([
             'chat_id' => -1001805255623,
@@ -256,7 +307,7 @@ USDT余额: $user->balance"
                 break;
             case '消费记录📝':
                 $Advertise = TelegramAdvertise::where('user_id', $user['id'])->limit(20)->get();
-                if ($Advertise <= 0) {
+                if ($Advertise) {
                     $response = Telegram::sendMessage([
                         'chat_id' => $chatId,
                         'text' => '暂无消费记录!'
@@ -264,7 +315,7 @@ USDT余额: $user->balance"
                     return $response['message_id'];
                     break;
                 } else {
-                    $response = Telegram::sendMessage([
+                 Telegram::sendMessage([
                         'chat_id' => $chatId,
                         'text' => '最近20条记录'
                     ]);
@@ -275,13 +326,13 @@ USDT余额: $user->balance"
                                 Keyboard::inlineButton(['text' => '查看详情', 'callback_data' => $v['id']])
                             );
                         $str = '发送时间:' . date('Y-m-d H:i', $v['send_time']) .
-                            '扣费金额:' . $v['deduction_money'];
+                            ';扣费金额:' . $v['deduction_money'];
                         if ($v['send_status'] == '3') {
-                            $str .= "状态:内容不合规,已退回!";
+                            $str .= ";状态:内容不合规,已退回!";
                         } elseif ($v['send_status'] == '2') {
-                            $str .= "状态:已发送";
+                            $str .= ";状态:已发送";
                         } elseif ($v['send_status'] == '1') {
-                            $str .= "状态:待审核发送";
+                            $str .= ";状态:待审核发送";
                         }
                         $response = Telegram::sendMessage([
                             'chat_id' => $chatId,
