@@ -488,12 +488,15 @@ USDT余额: $user->balance"
                 $advertise->deduction_money = $setting['advertise_price'];
                 $advertise->send_channel = $setting['publish_channel'];
                 $advertise->save();
+                $user->balance=$user['balance']-$setting['advertise_price'];
+                $user->save();
                 if ($advertise) {
                     $response = Telegram::sendMessage([
                         'chat_id' => $chatId,
                         'text' => "成功,审核完成后将发布到到频道!"
                     ]);
                 }
+
             } else {
                 $response = Telegram::sendMessage([
                     'chat_id' => $chatId,
