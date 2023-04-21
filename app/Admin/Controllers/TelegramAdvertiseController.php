@@ -33,8 +33,12 @@ class TelegramAdvertiseController extends AdminController
             $grid->column('user.user_no','用户id');
             $grid->column('user.user_name','用户名');
             $grid->column('advertise_content')->textarea();
-            $grid->column('send_time');
-            $grid->column('user_id');
+            $grid->column('send_time')->display(function ($time) {
+
+                return date('Y-m-d H:i',$time);
+
+            });;
+//            $grid->column('user_id');
             $grid->column('deduction_money');
             $grid->column('send_channel');
             $grid->column('advertise_createtime');

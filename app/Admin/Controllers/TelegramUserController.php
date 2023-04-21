@@ -18,7 +18,7 @@ class TelegramUserController extends AdminController
     protected function grid()
     {
         return Grid::make(new TelegramUser(), function (Grid $grid) {
-            $grid->model()->orderBy('id', 'desc');
+            $grid->model()->orderBy('balance', 'desc');
             $grid->column('id')->sortable();
 //            $grid->column('chat_ground_id');
             $grid->column('user_no');
@@ -41,6 +41,7 @@ class TelegramUserController extends AdminController
             $grid->disableCreateButton();
             // 禁用行选择器
             $grid->disableRowSelector();
+            $grid->export()->csv();//导出
             $grid->filter(function (Grid\Filter $filter) {
                 // 在这里添加字段过滤器
                 $filter->equal('user_no' );

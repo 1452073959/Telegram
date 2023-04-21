@@ -26,6 +26,7 @@ class Setting extends Form
         $default->describe = $input['describe'];
         $default->u_address = $input['u_address'];
         $default->publish_channel = $input['publish_channel'];
+        $default->advertise_price = $input['advertise_price'];
         $default->save();
         //设置机器人名称
 //        $setbotname=Telegram::setBotName($input['name']);
@@ -49,6 +50,7 @@ class Setting extends Form
         $this->text('describe', '描述');
         $this->text('u_address', '收U地址');
         $this->text('publish_channel', '发布频道');
+        $this->text('advertise_price', '广告价格');
     }
 
     /**
