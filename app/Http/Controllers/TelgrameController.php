@@ -248,6 +248,23 @@ USDT余额: $user->balance"
                 Cache::put('cz' . $response['message_id'], '充值');
                 return $response['message_id'];
                 break;
+            case '消费记录📝':
+               $Advertise=TelegramAdvertise::where('user_id',$user['id'])->count();
+                if($Advertise<=0){
+                    $response= Telegram::sendMessage([
+                        'chat_id' => $chatId,
+                        'text' => '暂无消费记录!'
+                    ]);
+                    return $response['message_id'];
+                    break;
+                }else{
+                    $response= Telegram::sendMessage([
+                        'chat_id' => $chatId,
+                        'text' => '您有'.$Advertise.'条订单记录,回复本消息查询;例:回复数字1即可查询1条;'
+                    ]);
+                    return $response['message_id'];
+                    break;
+                }
 
             case '/start':
                 // 定义五个自定义内容

@@ -32,6 +32,9 @@ class Send extends RowAction
         $res = TelegramAdvertise::find($this->getKey());
 //         dump($res->toarray());
         if ($res) {
+            if ($res['send_status'] == '2') {
+                return $this->response()->error('该内容已发送');
+            }
             $response=  Telegram::sendMessage([
                 'chat_id' => $res['send_channel'],
                 'text' => $res['advertise_content']]);
@@ -39,7 +42,9 @@ class Send extends RowAction
                 $res->send_status='2';
                 $res->save();
                 return $this->response()
+                    ->redirect('/advertise')
                     ->success('发送成功: ');
+
             }else{
                 return $this->response()->error('发送失败!');
             }

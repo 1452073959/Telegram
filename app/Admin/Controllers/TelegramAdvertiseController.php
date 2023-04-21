@@ -23,7 +23,7 @@ class TelegramAdvertiseController extends AdminController
         return Grid::make(new TelegramAdvertise(), function (Grid $grid) {
 
             $grid->selector(function (Grid\Tools\Selector $selector) {
-                $selector->select('send_status', [1 => '待发送', 2 => '已发送',3=>'无效']);
+                $selector->select('send_status', [1 => '待发送', 2 => '已发送',3=>'无效退回']);
             });
 
             $grid->model()->orderBy('id', 'desc');
@@ -38,7 +38,7 @@ class TelegramAdvertiseController extends AdminController
             $grid->column('deduction_money');
             $grid->column('send_channel');
             $grid->column('advertise_createtime');
-            $grid->send_status->using([1 => '待发送', 2 => '已发送',3=>'无效']);
+            $grid->send_status->using([1 => '待发送', 2 => '已发送',3=>'无效退回']);
 // 也可以通过以下方式启用或禁用按钮
             $grid->disableDeleteButton();
             $grid->disableEditButton();

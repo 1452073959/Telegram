@@ -18,16 +18,29 @@ class TelegramOrderController extends AdminController
     protected function grid()
     {
         return Grid::make(new TelegramOrder(), function (Grid $grid) {
+            $grid->selector(function (Grid\Tools\Selector $selector) {
+                $selector->select('order_status', [1 => '已支付', 2 => '未支付',3=>'关闭']);
+            });
+            $grid->model()->orderBy('id', 'desc');
             $grid->column('id')->sortable();
-            $grid->column('user_id');
+            // 关联 profile 表数据
+            $grid->model()->with(['user']);
+            $grid->column('user.user_no','用户id');
+            $grid->column('user.user_name','用户名');
             $grid->column('no');
             $grid->column('u_money');
             $grid->column('payment_time');
             $grid->column('order_hash');
             $grid->column('order_address');
-            $grid->column('order_createtime');
+            $grid->order_status->using([1 => '已支付', 2 => '未支付',3=>'关闭']);
+//            $grid->column('order_createtime');
             $grid->column('order_updatetime');
-        
+            // 禁用操作按钮
+            $grid->disableActions();
+            // 禁用创建按钮
+            $grid->disableCreateButton();
+            // 禁用行选择器
+            $grid->disableRowSelector();
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');
         

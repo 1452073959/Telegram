@@ -41,6 +41,7 @@ class Cancel extends RowAction
             $user->balance += $res['deduction_money'];
             $user->save();
             return $this->response()
+                ->redirect('/advertise')
                 ->success('取消成功');
         } else {
             return $this->response()->error('数据不存在!');
