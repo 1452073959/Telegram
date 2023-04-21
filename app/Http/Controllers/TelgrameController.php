@@ -307,7 +307,7 @@ USDT余额: $user->balance"
                 break;
             case '消费记录📝':
                 $Advertise = TelegramAdvertise::where('user_id', $user['id'])->limit(20)->get();
-                if ($Advertise) {
+                if (!$Advertise) {
                     $response = Telegram::sendMessage([
                         'chat_id' => $chatId,
                         'text' => '暂无消费记录!'
