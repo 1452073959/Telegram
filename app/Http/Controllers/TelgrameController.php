@@ -456,14 +456,15 @@ USDT余额: $user->balance"
             $sh_data = $callback_query['data'];//选择的值
             $str = mb_substr($sh_data, 0, 2);//同意or拒绝
             $id = mb_substr($sh_data, 2);  //广告的id=
+            $res = TelegramAdvertise::with('user')->find($id);
             if ($str == '同意') {
-                $res = TelegramAdvertise::with('user')->find($id);
                 if ($res) {
                     if ($res['send_status'] == '2') {
                         $response = send_message(
                             $chatId,
                             '该内容已发送!'
                         );
+                        return $response['message_id'];
                     }
                     //发送广告到频道
                     $response = send_message($res['send_channel'], $res['advertise_content']);
@@ -484,6 +485,34 @@ USDT余额: $user->balance"
                         '未查询到该广告信息!'
                     );
                 }
+            } elseif ($str == '拒绝') {
+                if ($res['send_status'] == '3') {
+                    $response = send_message(
+                        $chatId,
+                        '该内容已拒绝!'
+                    );
+                    return $response['message_id'];
+                }
+                $res->send_status = '3';
+                $res->save();
+                //通知发送失败
+                send_message($res['user']['user_no'], '您的广告信息未审核通过,费用已退回账户!');
+                //获取用户,返还扣除金额
+                $user = TelegramUser::where('id', $res['user_id'])->first();
+                $user->balance += $res['deduction_money'];
+                $user->save();
+                send_message($res['user']['user_no'],
+                    "
+账户余额变动:
++$res->deduction_money
+备注:审核失败退回!
+            ");
+                $response = send_message(
+                    $chatId,
+                    '拒绝原因,如需设置,请在5分钟内回复本条消息!'
+                );
+                Cache::put('Refuse', $res['user']['user_no'], 300);
+
             }
 
         } else {
@@ -534,7 +563,7 @@ USDT余额: $user->balance"
                         $chatId,
                         "
                         账户余额变动:
--$setting->deduction_money
+-$setting->advertise_price
 备注:发布内容扣费!
                         "
                     );
@@ -564,10 +593,28 @@ USDT余额: $user->balance"
                     "余额不足,请先充值!"
                 );
             }
+        } elseif ($reply_substr == "拒绝原因") {
+            $cx = Cache::get('Refuse');//获取查询
+            if ($cx) {
+                send_message(
+                    $cx,
+                    $text
+                );
+                send_message(
+                    $chatId,
+                    "拒绝原因回复成功!"
+                );
+            }else{
+                send_message(
+                    $chatId,
+                    "已超期!"
+                );
+            }
+
         } else {
             $response = send_message(
                 $chatId,
-                "未识别回复内容!"
+                "错误的回复!!"
             );
         }
         return $response['message_id'];
