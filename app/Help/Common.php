@@ -70,3 +70,16 @@ if(!function_exists('test_function')) {
     }
 }
 
+
+use Telegram\Bot\Laravel\Facades\Telegram;
+if(!function_exists('send_message')) {
+    function send_message($chatId,$text)
+    {
+        $response = Telegram::sendMessage([
+            'chat_id' => $chatId,
+            'text' =>$text
+        ]);
+
+        return $response;
+    }
+}

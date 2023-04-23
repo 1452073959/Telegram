@@ -86,22 +86,22 @@ class TelgrameController extends Controller
     {
 
 
-
-
-        $arr=array (
+        $res = Telegram::getChat(['https://t.me/tldbgong']);
+        dd($res);
+        $arr = array(
             'update_id' => 590437741,
             'message' =>
-                array (
+                array(
                     'message_id' => 988,
                     'from' =>
-                        array (
+                        array(
                             'id' => 5815318219,
                             'is_bot' => false,
                             'first_name' => 'dudu',
                             'language_code' => 'zh-hans',
                         ),
                     'chat' =>
-                        array (
+                        array(
                             'id' => 5815318219,
                             'first_name' => 'dudu',
                             'type' => 'private',
@@ -109,11 +109,8 @@ class TelgrameController extends Controller
                     'date' => 1682049051,
                     'text' => '消费记录📝',
                 ),
-        )  ;
-        return json_encode($arr,true);
-
-
-
+        );
+        return json_encode($arr, true);
 
 
         $Advertise = TelegramAdvertise::where('user_id', 33)->limit(20)->get();
@@ -142,15 +139,15 @@ class TelgrameController extends Controller
 
         }
         // 发送回复消息
-        $a = Telegram::sendMessage([
-            'chat_id' => -1001805255623,
-            'text' => '付费广告发布规则如下
+        $a = send_message(
+            -1001805255623,
+            '付费广告发布规则如下
 1:不得发布虚假诈骗广告，发现马上下架。
 
 2:广告行数不能超过10行。
 
 3:如在其他担保上了押金，开了公群，还要打广告的话请联系黄站长 @OPPO 多打20USDT发布，如果你不联系黄站长通过机器人发布广告，如果被发现将会直接下架你的广告并且余额清0'
-        ]);
+        );
         dd($a);
 
 
@@ -238,52 +235,51 @@ class TelgrameController extends Controller
         switch ($text) {
             case '👉必看发布规则👈':
                 // 发送回复消息
-                Telegram::sendMessage([
-                    'chat_id' => $chatId,
-                    'text' => '付费广告发布规则如下
+                $response = send_message(
+                    $chatId,
+                    '付费广告发布规则如下
 
 1:不得发布虚假诈骗广告，发现马上下架。
 
 2:广告行数不能超过10行。
 
 3:如在其他担保上了押金，开了公群，还要打广告的话请联系黄站长 @OPPO 多打20USDT发布，如果你不联系黄站长通过机器人发布广告，如果被发现将会直接下架你的广告并且余额清0'
-                ]);
-                return 'ok';
+                );
+                return $response;
                 break;
             case '发布广告🔥':
 
                 // 发送回复消息
-                Telegram::sendMessage([
-                    'chat_id' => $chatId,
-                    'text' => '付费广告发布规则如下
+                $response = send_message(
+                    $chatId,
+                    '付费广告发布规则如下
 
 1:不得发布虚假诈骗广告，发现马上下架。
 
 2:广告行数不能超过10行。
 
 3:如在其他担保上了押金，开了公群，还要打广告的话请联系黄站长 @OPPO 多打20USDT发布，如果你不联系黄站长通过机器人发布广告，如果被发现将会直接下架你的广告并且余额清0'
-                ]);
-
-                Telegram::sendMessage([
-                    'chat_id' => $chatId,
-                    'text' => '项目名称：
+                );
+                $response = send_message(
+                    $chatId,
+                    '项目名称：
 项目介绍：
 价格：
 联系人：
 请点击本消息选择回复,设置广告内容!'
-                ]);
+                );
 
                 return 'ok';
                 break;
             case '个人中心👤':
 
-                Telegram::sendMessage([
-                    'chat_id' => $chatId,
-                    'text' => "用户ID:$chatId
+                $response = send_message(
+                    $chatId,
+                    "用户ID:$chatId
 用户名: $name
 USDT余额: $user->balance"
-                ]);
-                return 'ok';
+                );
+                return $response;
                 break;
             case '我要充值💰':
                 $keyboard = Keyboard::make()
@@ -308,17 +304,17 @@ USDT余额: $user->balance"
             case '消费记录📝':
                 $Advertise = TelegramAdvertise::where('user_id', $user['id'])->limit(20)->get();
                 if (!$Advertise) {
-                    $response = Telegram::sendMessage([
-                        'chat_id' => $chatId,
-                        'text' => '暂无消费记录!'
-                    ]);
+                    $response = send_message(
+                        $chatId,
+                        '暂无消费记录!'
+                    );
                     return $response['message_id'];
                     break;
                 } else {
-                 Telegram::sendMessage([
-                        'chat_id' => $chatId,
-                        'text' => '最近20条记录'
-                    ]);
+                    $response = send_message(
+                        $chatId,
+                        '最近20条记录'
+                    );
                     foreach ($Advertise as $k => $v) {
                         $keyboard = Keyboard::make()
                             ->inline()
@@ -374,11 +370,14 @@ USDT余额: $user->balance"
                 return 'ok';
                 break;
             default:
-                $response = Telegram::sendMessage([
-                    'chat_id' => $chatId,
-                    'text' => "未知内容;请输入 /start 重启机器人"
-                ]);
-                return $response['message_id'];
+
+                //未知内容不回复
+                return 'ok';
+            /*                $response = Telegram::sendMessage([
+                                'chat_id' => $chatId,
+                                'text' => "未知内容;请输入 /start 重启机器人"
+                            ]);
+                            return $response['message_id'];*/
 
 
         }
@@ -390,8 +389,9 @@ USDT余额: $user->balance"
         $callback_query = $messageall['callback_query'];
         $chatId = $callback_query['from']['id'];
         Log::info($callback_query);
-        $message = Cache::get('cz' . $callback_query['message']['message_id']);//获取消息回调的id
-        $cx = Cache::get('cx' . $callback_query['message']['message_id']);//获取消息回调的id查询id
+        $message = Cache::get('cz' . $callback_query['message']['message_id']);//获取充值
+        $cx = Cache::get('cx' . $callback_query['message']['message_id']);//获取查询
+        $sh = Cache::get('sh' . $callback_query['message']['message_id']);//获取审核查询
         if ($message) {
             $callback_query_data = $callback_query['data'];//选择的值
             //添加两位随机小数
@@ -401,9 +401,9 @@ USDT余额: $user->balance"
                 //广告费用配置信息
                 $setting = TelegramSetting::first();
                 // 发送回复消息
-                Telegram::sendMessage([
-                    'chat_id' => $chatId,
-                    'text' => "
+                $response = send_message(
+                    $chatId,
+                    "
 注意小数点：$callback_query_data USDT 转错金额不认
 注意小数点：$callback_query_data 转错金额不认
 注意小数点：$callback_query_data 转错金额不认
@@ -414,7 +414,7 @@ USDT余额: $user->balance"
 请在60分钟完成付款，转错不认。
 收款地址为 USDT-TRC20
 转账10分钟后没到账及时联系>>"
-                ]);
+                );
                 //获取充值用户,
                 $user = TelegramUser::where('user_no', $chatId)->first();
                 //判断订幂等
@@ -432,31 +432,67 @@ USDT余额: $user->balance"
                     //60分钟未支付
                     Closeorder::dispatch($order)->delay(now()->addMinutes(1));
                     //订单创建成功
-                    $response = Telegram::sendMessage([
-                        'chat_id' => $chatId,
-                        'text' => '订单创建成功!请在60分钟内完成付款!'
-                    ]);
+                    $response = send_message(
+                        $chatId,
+                        '订单创建成功!请在60分钟内完成付款!'
+                    );
                 } else {
                     //失败的时候
-                    $response = Telegram::sendMessage([
-                        'chat_id' => $chatId,
-                        'text' => '订单创建失败!请重试'
-                    ]);
+                    $response = send_message(
+                        $chatId,
+                        '订单创建失败!请重试'
+                    );
                 }
 
             }
         } elseif ($cx) {
             $cx_data = $callback_query['data'];//选择的值
             $Advertise = TelegramAdvertise::find($cx_data);
-            $response = Telegram::sendMessage([
-                'chat_id' => $chatId,
-                'text' => $Advertise['advertise_content']
-            ]);
+            $response = send_message(
+                $chatId,
+                $Advertise['advertise_content']
+            );
+        } elseif ($sh) {
+            $sh_data = $callback_query['data'];//选择的值
+            $str = mb_substr($sh_data, 0, 2);//同意or拒绝
+            $id = mb_substr($sh_data, 2);  //广告的id=
+            if ($str == '同意') {
+                $res = TelegramAdvertise::with('user')->find($id);
+                if ($res) {
+                    if ($res['send_status'] == '2') {
+                        $response = send_message(
+                            $chatId,
+                            '该内容已发送!'
+                        );
+                    }
+                    //发送广告到频道
+                    $response = send_message($res['send_channel'], $res['advertise_content']);
+                    if ($response['message_id']) {
+                        $res->send_status = '2';
+                        $res->save();
+                        //通知发送成功
+                        send_message($res['user']['user_no'], '您的广告信息已审核通过,发布成功!');
+                    } else {
+                        $response = send_message(
+                            $chatId,
+                            '发送失败!'
+                        );
+                    }
+                } else {
+                    $response = send_message(
+                        $chatId,
+                        '未查询到该广告信息!'
+                    );
+                }
+            }
+
         } else {
-            $response = Telegram::sendMessage([
-                'chat_id' => $chatId,
-                'text' => "未识别回复内容!"
-            ]);
+            /*            $response = send_message(
+                            $chatId,
+                            ''
+                        );*/
+            //未知内容不回复
+            return 'ok';
         }
         return $response['message_id'];
     }
@@ -475,8 +511,6 @@ USDT余额: $user->balance"
 //        dump($reply);
         //截取回复内容前五个字确认回复内容
         $reply_substr = Str::limit($reply, 8, '');
-
-
         //回复的广告信息
         if ($reply_substr == "项目名称") {
             //判断余额是否足够
@@ -488,26 +522,53 @@ USDT余额: $user->balance"
                 $advertise->deduction_money = $setting['advertise_price'];
                 $advertise->send_channel = $setting['publish_channel'];
                 $advertise->save();
-                $user->balance=$user['balance']-$setting['advertise_price'];
+                $user->balance = $user['balance'] - $setting['advertise_price'];
                 $user->save();
-                if ($advertise) {
-                    $response = Telegram::sendMessage([
-                        'chat_id' => $chatId,
-                        'text' => "成功,审核完成后将发布到到频道!"
-                    ]);
+                if ($advertise && $user) {
+                    $response = send_message(
+                        $chatId,
+                        "成功,审核完成后将发布到到频道!"
+                    );
+                    //y余额变动
+                    $response = send_message(
+                        $chatId,
+                        "
+                        账户余额变动:
+-$setting->deduction_money
+备注:发布内容扣费!
+                        "
+                    );
+                    //发送至审核员
+                    //判断审核员是否存在;
+                    if ($setting->auditors) {
+                        $keyboard = Keyboard::make()
+                            ->inline()
+                            ->row(
+                                Keyboard::inlineButton(['text' => '同意', 'callback_data' => '同意' . $advertise['id']]),
+                                Keyboard::inlineButton(['text' => '拒绝', 'callback_data' => '拒绝' . $advertise['id']])
+                            );
+                        // 发送回复消息，并附带 Inline Keyboard
+                        $response = Telegram::sendMessage([
+                            'chat_id' => $chatId,
+                            'text' => $name . '发布了广告' . $text,
+                            'reply_markup' => $keyboard,
+                            'chat_instance' => 'some_unique_id' // 设置 chat_instance 参数
+                        ]);
+                        Cache::put('sh' . $response['message_id'], '审核广告');
+                    }
                 }
 
             } else {
-                $response = Telegram::sendMessage([
-                    'chat_id' => $chatId,
-                    'text' => "余额不足,请先充值!"
-                ]);
+                $response = send_message(
+                    $chatId,
+                    "余额不足,请先充值!"
+                );
             }
         } else {
-            $response = Telegram::sendMessage([
-                'chat_id' => $chatId,
-                'text' => "未识别回复内容!"
-            ]);
+            $response = send_message(
+                $chatId,
+                "未识别回复内容!"
+            );
         }
         return $response['message_id'];
 
