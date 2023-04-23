@@ -31,6 +31,9 @@ class TelegramHistoryController extends AdminController
             $grid->disableCreateButton();
             // 禁用行选择器
             $grid->disableRowSelector();
+            $grid->addTableClass(['table-text-center']);//表格文字居中
+            // 开启字段选择器功能
+            $grid->showColumnSelector();
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('user_no' );
                 $filter->like('user_name');

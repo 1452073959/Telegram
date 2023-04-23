@@ -21,7 +21,7 @@ class TelegramUserController extends AdminController
             $grid->model()->orderBy('balance', 'desc');
             $grid->column('id')->sortable();
 //            $grid->column('chat_ground_id');
-            $grid->column('user_no');
+            $grid->column('user_no')->copyable();;
             $grid->column('user_name');
 //            $grid->column('add_time');
             $grid->column('balance');
@@ -42,6 +42,9 @@ class TelegramUserController extends AdminController
             // 禁用行选择器
             $grid->disableRowSelector();
             $grid->export()->csv();//导出
+            $grid->addTableClass(['table-text-center']);//表格文字居中
+            // 开启字段选择器功能
+            $grid->showColumnSelector();
             $grid->filter(function (Grid\Filter $filter) {
                 // 在这里添加字段过滤器
                 $filter->equal('user_no' );

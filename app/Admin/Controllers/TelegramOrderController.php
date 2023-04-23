@@ -48,9 +48,9 @@ class TelegramOrderController extends AdminController
                 $filter->like('user.user_name','用户名');
                 $filter->between('order_updatetime')->datetime();
             });
-            $grid->header(function ($collection) use ($grid) {
-
-            });
+            $grid->addTableClass(['table-text-center']);//表格文字居中
+            // 开启字段选择器功能
+            $grid->showColumnSelector();
 
             $grid->footer(function ($collection) use ($grid) {
                 $query = \App\Models\TelegramOrder::query();

@@ -32,7 +32,7 @@ class TelegramAdvertiseController extends AdminController
             $grid->model()->with(['user']);
             $grid->column('user.user_no','用户id');
             $grid->column('user.user_name','用户名');
-            $grid->column('advertise_content')->textarea();
+            $grid->column('advertise_content')->textarea()->width('15%');
             $grid->column('send_time')->display(function ($time) {
                 return date('Y-m-d H:i',$time);
 
@@ -42,7 +42,7 @@ class TelegramAdvertiseController extends AdminController
             $grid->column('send_channel');
 //            $grid->column('advertise_createtime');
             $grid->column('advertise_updatetime');
-            $grid->column('refuse_describe','拒绝原因(备注)')->editable(true);
+            $grid->column('refuse_describe','拒绝原因')->editable(true)->help('拒绝时填写可发送至用户');
             $grid->send_status->using([1 => '待发送', 2 => '已发送',3=>'无效退回']);
 // 也可以通过以下方式启用或禁用按钮
             $grid->disableDeleteButton();
@@ -77,6 +77,9 @@ class TelegramAdvertiseController extends AdminController
             $grid->disableCreateButton();
             // 禁用行选择器
             $grid->disableRowSelector();
+            $grid->addTableClass(['table-text-center']);//表格文字居中
+            // 开启字段选择器功能
+            $grid->showColumnSelector();
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->like('user.user_no','用户id');
                 $filter->like('user.user_name','用户名');
