@@ -392,6 +392,12 @@ USDT余额: $user->balance"
         $message = Cache::get('cz' . $callback_query['message']['message_id']);//获取充值
         $cx = Cache::get('cx' . $callback_query['message']['message_id']);//获取查询
         $sh = Cache::get('sh' . $callback_query['message']['message_id']);//获取审核查询
+
+        // 关闭键盘
+        Telegram::deleteMessage([
+            'chat_id' =>$chatId,
+            'message_id' => $callback_query['message']['message_id'],
+        ]);
         if ($message) {
             $callback_query_data = $callback_query['data'];//选择的值
             //添加两位随机小数
@@ -598,7 +604,7 @@ USDT余额: $user->balance"
             if ($cx) {
                 send_message(
                     $cx,
-                    $text
+                    "拒绝原因:".$text
                 );
                 send_message(
                     $chatId,
