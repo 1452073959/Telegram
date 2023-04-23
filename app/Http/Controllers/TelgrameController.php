@@ -584,7 +584,7 @@ USDT余额: $user->balance"
                             );
                         // 发送回复消息，并附带 Inline Keyboard
                         $response = Telegram::sendMessage([
-                            'chat_id' => $chatId,
+                            'chat_id' => $setting['auditors'],
                             'text' => $name . '发布了广告' . $text,
                             'reply_markup' => $keyboard,
                             'chat_instance' => 'some_unique_id' // 设置 chat_instance 参数
