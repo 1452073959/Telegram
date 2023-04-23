@@ -606,7 +606,7 @@ USDT余额: $user->balance"
                 $res->refuse_describe = $text;
                 $res->save();
                 send_message(
-                    $res['user_no'],
+                    $res['user']['user_no'],
                     "拒绝原因:" . $text
                 );
                 send_message(
