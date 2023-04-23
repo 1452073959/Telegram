@@ -395,7 +395,7 @@ USDT余额: $user->balance"
 
         // 关闭键盘
         Telegram::deleteMessage([
-            'chat_id' =>$chatId,
+            'chat_id' => $chatId,
             'message_id' => $callback_query['message']['message_id'],
         ]);
         if ($message) {
@@ -517,7 +517,7 @@ USDT余额: $user->balance"
                     $chatId,
                     '拒绝原因,如需设置,请在5分钟内回复本条消息!'
                 );
-                Cache::put('Refuse', $res['user']['user_no'], 300);
+                Cache::put('Refuse', $id, 300);
 
             }
 
@@ -602,15 +602,18 @@ USDT余额: $user->balance"
         } elseif ($reply_substr == "拒绝原因") {
             $cx = Cache::get('Refuse');//获取查询
             if ($cx) {
+                $res = TelegramAdvertise::with('user')->find($cx);
+                $res->refuse_describe = $text;
+                $res->save();
                 send_message(
-                    $cx,
-                    "拒绝原因:".$text
+                    $res['user_no'],
+                    "拒绝原因:" . $text
                 );
                 send_message(
                     $chatId,
                     "拒绝原因回复成功!"
                 );
-            }else{
+            } else {
                 send_message(
                     $chatId,
                     "已超期!"

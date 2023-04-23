@@ -27,6 +27,7 @@ class Cancel extends RowAction
      */
     public function handle(Request $request)
     {
+
         //获取发送对象
         $res = TelegramAdvertise::with('user')->find($this->getKey());
 //         dump($res->toarray());
@@ -37,7 +38,7 @@ class Cancel extends RowAction
             $res->send_status = '3';
             $res->save();
             //通知发送失败
-            send_message($res['user']['user_no'],'您的广告信息未审核通过,费用已退回账户!');
+            send_message($res['user']['user_no'],'您的广告信息未审核通过,费用已退回账户!'.$res['refuse_describe']);
             //获取用户,返还扣除金额
             $user = TelegramUser::where('id', $res['user_id'])->first();
             $user->balance += $res['deduction_money'];
@@ -82,34 +83,6 @@ class Cancel extends RowAction
         return [];
     }
 
-    protected function script()
-    {
-        return <<<JS
-(function () {
-    var _this = this; // 将 self 替换为 this
-    // 点击取消按钮时的处理
-    this.rowActionElement.on('click', '.cancel', function () {
-        // 创建确认框
-        var modal = new Dcat.modal({
-            title: '确认取消',
-            content: '<input type="text" id="input_text" class="form-control" placeholder="请输入内容">',
-            okText: '确认',
-            cancelText: '取消',
-            onOk: function() {
-                // 点击确认按钮时的回调函数
-                var inputText = $('#input_text').val();
-                // 在这里处理输入框中的内容
-                console.log('输入框内容：', inputText);
-                // 调用 handle 方法进行后续操作
-                _this.handle(); // 将 self.handle() 替换为 this.handle()
-            }
-        });
-        // 打开确认框
-        modal.show();
-    });
-}).call(this);
-JS;
-    }
 
 
 }
